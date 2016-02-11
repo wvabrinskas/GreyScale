@@ -1,0 +1,11 @@
+Package: com.irepo.grayscale
+Name: GreyScale
+Depends: mobilesubstrate
+Depiction: https://theirepo.com/cydia/depictions/GreyScale.php
+Architecture: iphoneos-arm
+Description: Converts all your springboard icon images into a greyscale image with a specified opacity.
+Maintainer: Wiliam Vabrinskas
+Author: Wiliam Vabrinskas
+Section: Tweaks
+Version: 0.0.1-36
+Installed-Size: 252

@@ -1,0 +1,10 @@
+{
+    entry = {
+	bundle = GreyScale;
+	cell = PSLinkCell;
+	detail = GreyScaleListController;
+	icon = GreyScale.png;
+	isController = 1;
+	label = GreyScale;
+    };
+}
