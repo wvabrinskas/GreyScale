@@ -5,6 +5,7 @@ static BOOL enabled = YES;
 static CGFloat alpha;
 
 @interface SBIconView : UIView
++ (CGSize)defaultIconImageSize;
 @end
 @interface SBFolderIconView : SBIconView
 @end
@@ -98,8 +99,9 @@ static void PreferencesChangedCallback() { // call this on tweak load to initial
 @interface SBFolderIconImageView : UIImageView
 @end 
 
-static CGFloat newSize = 30.0f;
+static CGFloat newSize = 70.0f;
 static CGFloat scaleRatio = 1.0f;
+static CGFloat adjustInset = newSize - 15.0f;
 
 %hook SBFolderIconBackgroundView 
 -(id)initWithDefaultSize {
@@ -111,9 +113,11 @@ static CGFloat scaleRatio = 1.0f;
 %end
 
 %hook SBFolderIconView
+
 -(CGRect)frameForMiniIconAtIndex:(unsigned long long)arg1 {
   CGRect orig = %orig;
-  return CGRectMake(orig.origin.x * scaleRatio,orig.origin.y * scaleRatio,orig.size.width * scaleRatio,orig.size.height * scaleRatio);
+  scaleRatio = [%c(SBIconView) defaultIconImageSize].width / newSize;
+  return CGRectMake(orig.origin.x + scaleRatio, orig.origin.y + scaleRatio,orig.size.width * scaleRatio,orig.size.height * scaleRatio);
 }
 
 %end
@@ -122,18 +126,19 @@ static CGFloat scaleRatio = 1.0f;
 
 -(CGRect)frameForMiniIconAtIndex:(unsigned long long)arg1 {
   CGRect orig = %orig;
-  return CGRectMake(orig.origin.x * scaleRatio,orig.origin.y * scaleRatio,orig.size.width * scaleRatio,orig.size.height * scaleRatio);
+  scaleRatio =  newSize / [%c(SBIconView) defaultIconImageSize].width;
+  return CGRectMake(orig.origin.x + scaleRatio, orig.origin.y + scaleRatio,orig.size.width * scaleRatio,orig.size.height * scaleRatio);
 }
 
 -(void)layoutSubviews {
   %orig;
   UIView *wrapper = MSHookIvar<UIView*>(self,"_leftWrapperView");
   CGRect orig = wrapper.frame;
-  wrapper.frame = CGRectMake(orig.origin.x * scaleRatio, orig.origin.y * scaleRatio, orig.size.width * scaleRatio, orig.size.height * scaleRatio);
+  wrapper.frame = CGRectMake(orig.origin.x + adjustInset, orig.origin.y + adjustInset, adjustInset, adjustInset);
 
   UIView *rightWrapper = MSHookIvar<UIView*>(self,"_rightWrapperView");
   CGRect rOrig = rightWrapper.frame;
-  rightWrapper.frame = CGRectMake(rOrig.origin.x * scaleRatio, rOrig.origin.y * scaleRatio, rOrig.size.width * scaleRatio, rOrig.size.height * scaleRatio);
+  rightWrapper.frame = CGRectMake(rOrig.origin.x + adjustInset, rOrig.origin.y + adjustInset, adjustInset, adjustInset);
 }
 %end
 
@@ -142,7 +147,7 @@ static CGFloat scaleRatio = 1.0f;
   %orig;
   UIView *wrapper = MSHookIvar<UIView*>(self,"_iconImageView");
   CGRect orig = wrapper.frame;
-  scaleRatio = orig.size.width / newSize;
+  scaleRatio = newSize / orig.size.width;
   wrapper.frame = CGRectMake(orig.origin.x,orig.origin.y,newSize,newSize);
 }
 
